@@ -10,8 +10,8 @@ set(CMAKE_AUTORCC ON)
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
-find_package(QT NAMES Qt6 Qt5 REQUIRED COMPONENTS Core Quick LinguistTools)
-find_package(Qt${QT_VERSION_MAJOR} REQUIRED COMPONENTS Core Quick LinguistTools)
+find_package(QT NAMES Qt6 Qt5 REQUIRED COMPONENTS Core Quick LinguistTools WebSockets)
+find_package(Qt${QT_VERSION_MAJOR} REQUIRED COMPONENTS Core Quick LinguistTools WebSockets)
 
 set(TS_FILES ${PRJ_ROOT_NAME}_fa_IR.ts)
 
@@ -42,14 +42,20 @@ else()
 else()
   add_executable(${PRJ_ROOT_NAME}
     ${PROJECT_SOURCES}
+    SocketClient.h SocketClient.cpp
+    Structures.h
+    Parser.h Parser.cpp
   )
 endif()
 
 qt5_create_translation(QM_FILES ${CMAKE_SOURCE_DIR} ${TS_FILES})
 endif()
 
-target_link_libraries(${PRJ_ROOT_NAME}
-  PRIVATE Qt${QT_VERSION_MAJOR}::Core Qt${QT_VERSION_MAJOR}::Quick)
+target_link_libraries(${PRJ_ROOT_NAME} PRIVATE
+  Qt${QT_VERSION_MAJOR}::Core
+  Qt${QT_VERSION_MAJOR}::Quick
+  Qt${QT_VERSION_MAJOR}::WebSockets
+)
 
 # Qt for iOS sets MACOSX_BUNDLE_GUI_IDENTIFIER automatically since Qt 6.1.
 # If you are developing for iOS or macOS you should consider setting an
@@ -78,3 +84,4 @@ endif()
 
 
 target_compile_definitions(${PRJ_ROOT_NAME} PUBLIC -DPRJ_ROOT_NAME="${PRJ_ROOT_NAME}")
+target_include_directories(${PRJ_ROOT_NAME} PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})

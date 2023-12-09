@@ -44,6 +44,7 @@ Window {
 
         Map {
             id: mapItem
+            property real fixedSize: 10
             plugin: myPlugin
             Layout.fillWidth: true
             Layout.fillHeight: true
@@ -91,29 +92,30 @@ Window {
                 delegate: MapQuickItem {
                     coordinate: QtPositioning.coordinate(
                                     35.6900 + index * 0.01, 51.3300)
-                    anchorPoint.x: point.width / 2
-                    anchorPoint.y: point.height / 2
+                    anchorPoint.x: mapItem.fixedSize * 7.5 / 2
+                    anchorPoint.y: mapItem.fixedSize * 7.5 / 2
                     sourceItem: Rectangle {
                         color: "green"
                         radius: 3
-                        width: 75
-                        height: 45
+                        width: mapItem.fixedSize * 7.5
+                        height: mapItem.fixedSize * 7.5
                     }
                 }
             }
+
             MapItemView {
                 model: pointsModel
                 delegate: MapQuickItem {
                     id: pointOnMap
                     coordinate: QtPositioning.coordinate(lati, longi)
-                    anchorPoint.x: point.width / 2
-                    anchorPoint.y: point.height / 2
+                    anchorPoint.x: mapItem.fixedSize / 2
+                    anchorPoint.y: mapItem.fixedSize / 2
                     sourceItem: Rectangle {
                         id: point
                         color: "red"
                         radius: 5
-                        width: 10
-                        height: 10
+                        width: mapItem.fixedSize
+                        height: mapItem.fixedSize
                     }
                 }
             }
