@@ -22,6 +22,11 @@ plt.figure(figsize=(8, 6))
 batch_size = 5
 batch_points = []
 
+plt.title('DenStream Clustering for Circular Data with Outliers (Batch Update)')
+plt.xlabel('X')
+plt.ylabel('Y')
+plt.ion()   
+plt.show()
 # Stream data and calculate clusters in batches
 for i, point in enumerate(X):
     batch_points.append(point)
@@ -43,11 +48,9 @@ for i, point in enumerate(X):
                 plt.scatter(batch_point[0], batch_point[1], color='black', marker='x')
             else:
                 plt.scatter(batch_point[0], batch_point[1], color=plt.cm.tab10(cluster))
+            plt.pause(0.1) 
+            plt.draw()
         
         # Reset batch_points after processing the batch
         batch_points = []
 
-plt.title('DenStream Clustering for Circular Data with Outliers (Batch Update)')
-plt.xlabel('X')
-plt.ylabel('Y')
-plt.show()

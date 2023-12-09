@@ -3,7 +3,6 @@ import websockets
 import json
 import matplotlib.pyplot as plt
 import random
-import time
 
 async def send_points(websocket):
     idNumber = 1  # 0 reserved by Heydar
