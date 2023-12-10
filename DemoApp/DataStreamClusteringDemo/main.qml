@@ -36,7 +36,7 @@ Window {
     DenStreamClusterer {
         id: solver
         onClusterLabelForId: {
-            var color = cluster == -1 ? "gray" : mapItem.getColor(cluster)
+            var color = cluster == -1 ? "white" : solver.getColor(cluster)
             if (cluster != 0) {
                 console.log("cluster: ", cluster)
             }
@@ -101,7 +101,7 @@ Window {
                     "lati": lat,
                     "longi": lon,
                     "id": str,
-                    "pcolor": "red"
+                    "pcolor": "black"
                 }
                 pointsModel.append(itemInList)
                 mapItem.pointsMapRef[str] = pointsModel.count - 1

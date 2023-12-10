@@ -17,6 +17,8 @@ public:
   // thread safe
   Q_INVOKABLE void addPoint(QString const &id, double latitude,
                             double longitude);
+  Q_INVOKABLE static QString getColor(int clusterNumber);
+
 signals:
   void clusterLabelForId(QString const &id, int cluster);
 

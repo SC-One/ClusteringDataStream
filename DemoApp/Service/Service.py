@@ -3,6 +3,7 @@ import websockets
 import json
 import numpy as np
 from sklearn.datasets import make_circles
+from urllib.parse import parse_qs, urlparse
 
 
 import sys
@@ -10,11 +11,19 @@ sys.path.append('DenStream')
 from DenStream import DenStream
 
 
+
 async def handle_client(websocket, path):
-    
+    parsed = urlparse(path)
+    query_params = parse_qs(parsed.query)
+    print(query_params)
+
+    epsilonParam = query_params.get('epsilonParam', [0.35])[0]
+    batchSizeProcess = query_params.get('batchSizeProcess', [10])[0]
+    print(epsilonParam, batchSizeProcess)
+
     X, ____ = make_circles(n_samples=0, noise=0.05, random_state=42, factor=0.5) 
-    denstream = DenStream(lambd=0.1, eps=0.35, beta=0.5, mu=5) # change eps please in the class to demonstrate outliers ...
-    BATCH_SIZE_TOPROCESS = 10
+    denstream = DenStream(lambd=0.1, eps=float(epsilonParam), beta=0.5, mu=5) # change eps please in the class to demonstrate outliers ...
+    BATCH_SIZE_TOPROCESS = int(batchSizeProcess)
 
     accumulated_points = [] 
     accumulated_point_ids = [] 

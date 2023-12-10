@@ -1,4 +1,5 @@
 #include "DenStreamClusterer.h"
+#include <QColor>
 #include <SocketClient.h>
 #include <chrono>
 
@@ -42,4 +43,9 @@ void DenStreamClusterer::addPoint(const QString &id, double latitude,
   msg.point.x = latitude;
   msg.point.y = longitude;
   _pointsQueuee.enqueue(msg);
+}
+
+QString DenStreamClusterer::getColor(int clusterNumber) {
+  return QColor(static_cast<Qt::GlobalColor>(clusterNumber + 4))
+      .name(); // bypass first 4 colors
 }

@@ -35,7 +35,7 @@ async def receive_results(websocket):
         if (-1 == cluster):
             plt.scatter(x, y, color='black', marker='x' , s=250, linewidths=6)
         else:
-            plt.scatter(x, y, color='C' + str(cluster % 10))
+            plt.scatter(x, y, color='C' + str(cluster % 10), s=300)
         plt.pause(0.01)  # Update the plot
 
         # Redraw the plot to reflect the changes

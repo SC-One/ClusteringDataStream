@@ -8,8 +8,10 @@ class SocketClient : public QObject {
   Q_OBJECT
 
 public:
-  explicit SocketClient(QUrl const &url = QUrl("ws://localhost:57777"),
-                        QObject *parent = nullptr);
+  explicit SocketClient(
+      QUrl const &url =
+          QUrl("ws://localhost:57777/?epsilonParam=0.67&batchSizeProcess=5"),
+      QObject *parent = nullptr);
   ~SocketClient();
 
   void sendPoint(const QString &pointId, const Point &point);
