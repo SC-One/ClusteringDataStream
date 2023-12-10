@@ -11,10 +11,10 @@ QJsonArray Parser::pointToJson(const Point &point) {
   return arr;
 }
 
-Point Parser::jsonToPoint(const QJsonObject &obj) {
+Point Parser::jsonToPoint(const QJsonArray &obj) {
   Point point;
-  point.x = obj["x"].toDouble();
-  point.y = obj["y"].toDouble();
+  point.x = obj[0].toDouble();
+  point.y = obj[1].toDouble();
   return point;
 }
 
@@ -30,8 +30,8 @@ ClusterLabel Parser::parseMessage(const QString &msg) {
   QJsonObject obj = doc.object();
   ClusterLabel result;
   result.id = obj["id"].toString();
-  result.point = jsonToPoint(obj["point"].toObject());
-  result.id = obj["cluster"].toInt();
+  result.cluster = obj["cluster"].toInt();
+  result.point = jsonToPoint(obj["point"].toArray());
   return result;
 }
 

@@ -7,6 +7,8 @@ import QtQuick.Layouts 1.12
 
 import QtQuick.Dialogs 1.1
 
+import ir.HCoding.SocietyCleaner 1.0
+
 Window {
     id: windowRoot
     width: Qt.platform.os == "android" ? Screen.width : 512
@@ -31,6 +33,20 @@ Window {
         name: "osm" // "mapboxgl", "esri", ...
     }
 
+    DenStreamClusterer {
+        id: solver
+        onClusterLabelForId: {
+            var color = cluster == -1 ? "gray" : mapItem.getColor(cluster)
+            if (cluster != 0) {
+                console.log("cluster: ", cluster)
+            }
+
+            //            console.log(color)
+            var index = mapItem.pointsMapRef[id]
+            pointsModel.get(index).pcolor = color
+        }
+    }
+
     ListModel {
         id: pointsModel
     }
@@ -48,15 +64,26 @@ Window {
 
         Map {
             id: mapItem
-            property real fixedSize: 10
+            property real fixedSize: 15
+            property int number: 0 // 0 is reserved
+            property var pointsMapRef
+            function nextId() {
+                return ++number
+            }
+            function getColor(number) {
+                var hue = (number * 10) % 360
+                return Qt.hsla(hue, 1, 0.5, 1)
+            }
+            Component.onCompleted: pointsMapRef = {}
+
             plugin: myPlugin
             Layout.fillWidth: true
             Layout.fillHeight: true
             center: QtPositioning.coordinate(35.6998, 51.3354) // azadi
-            zoomLevel: 15
+            zoomLevel: 5
 
-            minimumZoomLevel: 15
-            maximumZoomLevel: 15
+            minimumZoomLevel: 5
+            maximumZoomLevel: 8
             function mouseToCordinate(x = 125, y = 111) {
                 var point = Qt.point(x, y)
                 return mapItem.toCoordinate(point)
@@ -67,13 +94,27 @@ Window {
                 return mapItem.toCoordinate(point)
             }
 
+            // id is number.
+            function addPointOnMap(lat, lon, id) {
+                var str = id.toString()
+                var itemInList = {
+                    "lati": lat,
+                    "longi": lon,
+                    "id": str,
+                    "pcolor": "red"
+                }
+                pointsModel.append(itemInList)
+                mapItem.pointsMapRef[str] = pointsModel.count - 1
+                solver.addPoint(str, lat, lon)
+            }
+
             MouseArea {
                 id: mouseMap
-                property int number: 0 // 0 is reserved
                 anchors.fill: parent
                 acceptedButtons: Qt.LeftButton | Qt.MiddleButton
                 onClicked: {
                     // add single point in the datastream
+                    // (test outlier)
                     var point = Qt.point(mouse.x, mouse.y)
                     var pos = mapItem.mousePointToCordinate(point)
 
@@ -87,17 +128,8 @@ Window {
                         return
                     }
 
-                    mouseMap.number += 1
-                    var itemInList = {
-                        "lati": pos.latitude,
-                        "longi": pos.longitude,
-                        "id": mouseMap.number.toString()
-                        //                        ,
-                        //                        "xClicked": mouseMap.mouseX,
-                        //                        "yClicked": mouseMap.mouseY
-                    }
-                    pointsModel.append(itemInList)
-                    console.log(point, "\t", pos, "\t", itemInList)
+                    mapItem.addPointOnMap(pos.latitude, pos.longitude,
+                                          mapItem.nextId())
                 }
             }
             function reloadPan() {
@@ -118,7 +150,7 @@ Window {
                     }
                     function deleteTheItemOnID(id) {
                         for (var i = 0; i < rectangleModels.count; ++i) {
-                            if (rectangleModels.get(i).myId == id) {
+                            if (rectangleModels.get(i).myId === id) {
                                 rectangleModels.remove(i)
                                 return
                             }
@@ -164,6 +196,10 @@ Window {
                                                            0,
                                                            resizableItem.pointClicked.y
                                                            - resizableItem.height / 4))
+                        onTopLeftCoordChanged: {
+                            console.log("topLeftCoord: ", topLeftCoord)
+                        }
+
                         property var bottomRightCoord: mapItem.mouseToCordinate(
                                                            Math.max(
                                                                0,
@@ -173,6 +209,10 @@ Window {
                                                                0,
                                                                resizableItem.pointClicked.y
                                                                + resizableItem.height / 4))
+                        onBottomRightCoordChanged: {
+                            console.log("bottomRightCoord:", bottomRightCoord)
+                        }
+
                         Timer {
                             id: boundedTimer
                             interval: interactiveVars.defaultGeneratingInterval
@@ -185,15 +225,8 @@ Window {
                                             ) * (rightBottomCoord.longitude
                                                  - leftTopCoord.longitude)
 
-                                mouseMap.number += 1
-                                var itemInList = {
-                                    "lati": randomX,
-                                    "longi": randomY,
-                                    "id": mouseMap.number.toString()
-                                }
-                                pointsModel.append(itemInList)
-                                //                                console.log("Here I came", pointsModel.count,
-                                //                                            randomX, randomY)
+                                mapItem.addPointOnMap(randomX, randomY,
+                                                      mapItem.nextId())
                             }
                             repeat: true
                             running: interactiveVars.runningGenerateData
@@ -217,7 +250,7 @@ Window {
                     anchorPoint.y: mapItem.fixedSize / 2
                     sourceItem: Rectangle {
                         id: point
-                        color: "red"
+                        color: pcolor
                         radius: 5
                         width: mapItem.fixedSize
                         height: mapItem.fixedSize

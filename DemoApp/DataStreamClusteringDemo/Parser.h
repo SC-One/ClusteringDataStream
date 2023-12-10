@@ -13,7 +13,7 @@ class Parser : public QObject {
 public:
   static QJsonArray pointToJson(const Point &point);
 
-  static Point jsonToPoint(const QJsonObject &obj);
+  static Point jsonToPoint(const QJsonArray &obj);
 
   static QByteArray messageToJson(const Message &message);
 

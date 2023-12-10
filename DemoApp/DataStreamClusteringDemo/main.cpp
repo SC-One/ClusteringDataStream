@@ -1,8 +1,13 @@
 #include <QGuiApplication>
 #include <QQmlApplicationEngine>
+#include <QQmlEngine>
 
 #include <QLocale>
 #include <QTranslator>
+
+#include <Structures.h>
+
+#include <DenStreamClusterer.h>
 
 int main(int argc, char *argv[]) {
 #if QT_VERSION < QT_VERSION_CHECK(6, 0, 0)
@@ -10,6 +15,10 @@ int main(int argc, char *argv[]) {
 #endif
   QGuiApplication app(argc, argv);
 
+  qRegisterMetaType<Message>("Message");
+  qRegisterMetaType<Point>("Point");
+  qmlRegisterType<DenStreamClusterer>("ir.HCoding.SocietyCleaner", 1, 0,
+                                      "DenStreamClusterer");
   QTranslator translator;
   const QStringList uiLanguages = QLocale::system().uiLanguages();
   for (const QString &locale : uiLanguages) {

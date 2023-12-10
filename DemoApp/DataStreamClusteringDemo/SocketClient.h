@@ -10,8 +10,10 @@ class SocketClient : public QObject {
 public:
   explicit SocketClient(QUrl const &url = QUrl("ws://localhost:57777"),
                         QObject *parent = nullptr);
+  ~SocketClient();
 
   void sendPoint(const QString &pointId, const Point &point);
+  void sendPoint(Message const &msg);
 
 signals:
   void clusterLabelsReceived(const ClusterLabel &data);
@@ -24,7 +26,7 @@ private slots:
   void onTextMessageReceived(const QString &message);
 
 private:
-  QWebSocket webSocket;
+  QWebSocket _webSocket;
 };
 
 #endif // SOCKETCLIENT_H

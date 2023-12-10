@@ -45,6 +45,8 @@ else()
     SocketClient.h SocketClient.cpp
     Structures.h
     Parser.h Parser.cpp
+    ThreadSafeQueue.h ThreadSafeQueue.cpp
+    DenStreamClusterer.h DenStreamClusterer.cpp
   )
 endif()
 
