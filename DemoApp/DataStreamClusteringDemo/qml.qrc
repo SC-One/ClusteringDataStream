@@ -1,5 +1,7 @@
 <RCC>
     <qresource prefix="/">
         <file>main.qml</file>
+        <file>InteractiveRectangle.qml</file>
+        <file>HoverDragMouse.qml</file>
     </qresource>
 </RCC>
